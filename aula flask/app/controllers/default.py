@@ -24,10 +24,31 @@ def status_led_vermelho():
         statusVermelho = 'LED vermelho OFF'
     return statusVermelho
 
-
+def status_led_verde():
+    if gpio.input(LedVerde) == 1:
+        statusVerde = 'LED vermelho ON'
+    else:
+        statusVerde = 'LED vermelho OFF'
+    return statusVerde
 
 
 @app.route("/")
 def index():
+    templateData = {
+        'LedRed': status_led_vermelho(),
+        'LedGreen': status_led_verde()
+    }
+    return render_template('index.html', **templateData)
 
+@app.route("/led_vermelho/<action>")
+def led_vermelho(action):
+    if action == 'on':
+        gpio.output(LedVermelho, gpio.HIGH)
+    if action == 'off':
+        gpio.output(LedVermelho, gpio.LOW)
 
+    templateData = {
+        'LedRed': status_led_vermelho(),
+        'LedGreen': status_led_verde()
+    }
+    return render_template('index.html', **templateData)
